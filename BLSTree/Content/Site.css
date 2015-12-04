@@ -22,3 +22,11 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.active{
+    font-weight: bold;
+}
+
+ul{
+    list-style: none;
+}

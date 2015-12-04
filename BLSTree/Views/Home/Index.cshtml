@@ -14,7 +14,12 @@
     <div class="row">
         <h3>TreeView</h3>
         <div class="jstree jstree-1 jstree-default" role="tree" tabindex="0" aria-activedescendant="565" aria-busy="false">
-            <bls-tree ng-model="data" display-fn="displayFn"></bls-tree>
+            <bls-tree 
+                ng-model="data" 
+                display-fn="displayFn"
+                on-select="selectNode">
+                <span>{{node.text + " - " + node.description}}</span>
+            </bls-tree>
         </div>
     </div>
 </div>

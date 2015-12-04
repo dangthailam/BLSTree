@@ -134,7 +134,7 @@
       }
         ];
 
-    $scope.displayFn = function (node) {
-        return node.text + " " + node.description;
+    $scope.selectNode = function (node) {
+        console.log(node);
     }
 }]);
