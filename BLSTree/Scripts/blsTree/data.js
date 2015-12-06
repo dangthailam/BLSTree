@@ -110,9 +110,11 @@
         console.log(node);
     }
 
-    $scope.loadAsync = function () {
+    $scope.loadAsync = function (node) {
+        var deferred = $q.defer();
+
         setTimeout(function () {
-            return [
+            deferred.resolve([
                     {
                         id: 4,
                         text: 'Lam 1',
@@ -125,8 +127,10 @@
                         description: 'Test of Lam 2',
                         children: null
                     }
-            ];
+            ]);
         }, 1000);
+
+        return deferred.promise;
 
     }
 }]);

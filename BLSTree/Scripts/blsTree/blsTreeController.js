@@ -73,7 +73,7 @@
         transclude: true
     };
 
-}]).directive("treeItem", [ '$q', function ($q) {
+}]).directive("treeItem", function () {
     return {
         restrict: 'E',
         require: "^blsTree",
@@ -81,15 +81,8 @@
             // Rendering template for the current node
 
             if (scope.asyncLoad() && scope.node.children != null && scope.node.children.length == 0) {
-                function async() {
-                    var deferred = $q.defer();
 
-                    deferred.resolve(return scope.asyncLoad()(););
-
-                    return deferred.promise;
-                }
-
-                async().then(function (data) {
+                scope.asyncLoad()().then(function (data) {
                     scope.node.children = data;
 
                     blsTreeCtrl.template(scope, function (clone) {
@@ -105,7 +98,7 @@
         transclude: true,
         replace: true
     };
-}]).directive("treeTransclude", function () {
+}).directive("treeTransclude", function () {
     return {
         link: function (scope, element, attrs, controller) {
             if (!scope.node.state) {
