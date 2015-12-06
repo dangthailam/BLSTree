@@ -1,4 +1,4 @@
-﻿myApp.controller("blsTreeController", ['$scope', function ($scope) {
+﻿myApp.controller("blsTreeController", ['$scope', '$q', function ($scope, $q) {
     $scope.data = [
       {
           id: 1,
@@ -18,12 +18,14 @@
                         {
                             id: 111,
                             text: 'aaa',
-                            description: 'qsdqsd  qsdqsd qdqsd qsdqs'
+                            description: 'qsdqsd  qsdqsd qdqsd qsdqs',
+                            children: []
                         },
                         {
                             id: 111,
                             text: 'aaa',
-                            description: 'qsdqsd  qsdqsd qdqsd qsdqs'
+                            description: 'qsdqsd  qsdqsd qdqsd qsdqs',
+                            children: null
                         }
                       ]
                   },
@@ -100,41 +102,31 @@
           id: 4,
           text: 'aaa',
           description: 'qsdqsd  qsdqsd qdqsd qsdqs',
-          children: [
-            { 
-                id: 41,
-                text: 'aaa',
-                description: 'qsdqsd  qsdqsd qdqsd qsdqs',
-                children: [
-                  {
-                      id: 411,
-                      text: 'aaa',
-                      description: 'qsdqsd  qsdqsd qdqsd qsdqs',
-                      children: [
-                        {
-                            id: 111,
-                            text: 'aaa',
-                            description: 'qsdqsd  qsdqsd qdqsd qsdqs'
-                        },
-                        {
-                            id: 111,
-                            text: 'aaa',
-                            description: 'qsdqsd  qsdqsd qdqsd qsdqs'
-                        }
-                      ]
-                  },
-                  {
-                      id: 111,
-                      text: 'aaa',
-                      description: 'qsdqsd  qsdqsd qdqsd qsdqs'
-                  }
-                ]
-            }
-          ]
+          children: []
       }
-        ];
+    ];
 
     $scope.selectNode = function (node) {
         console.log(node);
+    }
+
+    $scope.loadAsync = function () {
+        setTimeout(function () {
+            return [
+                    {
+                        id: 4,
+                        text: 'Lam 1',
+                        description: 'Test of Lam 1',
+                        children: []
+                    },
+                    {
+                        id: 4,
+                        text: 'Lam 2',
+                        description: 'Test of Lam 2',
+                        children: null
+                    }
+            ];
+        }, 1000);
+
     }
 }]);

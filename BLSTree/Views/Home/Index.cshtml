@@ -17,12 +17,11 @@
             <bls-tree 
                 ng-model="data" 
                 display-fn="displayFn"
-                on-select="selectNode">
+                on-select="selectNode"
+                async-load="loadAsync">
+                <i class="tree-icon tree-default-icon"></i>
                 <span>{{node.text + " - " + node.description}}</span>
             </bls-tree>
         </div>
     </div>
 </div>
-
-
-

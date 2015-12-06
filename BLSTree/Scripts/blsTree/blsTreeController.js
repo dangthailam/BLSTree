@@ -18,13 +18,11 @@
             node.state.opened = !node.state.opened;
         };
 
-        var template = '<ul>' + 
-                '<li ng-repeat="node in node.children">' +
-                    '<div ng-click="selectNode(node)" ng-class="{active: selectedNode === node}">' +
-                        '<i ng-if="node.children != null" class="glyphicon" ng-class="{\'glyphicon-plus\': !node.state.opened, \'glyphicon-minus\': node.state.opened}" ng-click="toggleChildren(node)"></i>' +
-                        '<span tree-transclude></span>' +
-                    '</div>' +
-                    '<tree-item ng-if="node.state.opened && node.children != null && node.children.length > 0"></tree-item>' +
+        var template = '<ul>' +
+                '<li ng-repeat="node in node.children" class="tree-node" ng-class="{\'tree-closed\': !node.state.opened, \'tree-open\': node.state.opened, \'tree-last\': $last, \'tree-leaf\': node.children == null}">' +
+                    '<i class="tree-icon tree-ocl" ng-click="toggleChildren(node)"></i>' +
+                    '<span ng-click="selectNode(node)" ng-class="{active: selectedNode === node}" tree-transclude></span>' +
+                    '<tree-item ng-if="node.state.opened"></tree-item>' +
                 '</li>' +
             '</ul>';
 
@@ -32,15 +30,12 @@
         this.template = $compile(template);
     }];
 
-    var link = function (scope, element, attrs) {
-        
-    };
-
-    return {
-        restrict: 'E',
-        controller: controller,
-        compile: function (element, attrs, childTranscludeFn) {
-            return function (scope, element, attrs, blsTreeCtrl) {
+    var compile = function (element, attrs, childTranscludeFn) {
+        return {
+            pre: function preLink(scope, element, attributes) {
+                
+            },
+            post: function postLink(scope, element, attributes, blsTreeCtrl) {
                 scope.$watch('ngModel', function (newVal) {
                     if (angular.isArray(newVal)) {
                         for (var i = 0; i < newVal.length; i++) {
@@ -57,36 +52,60 @@
                     }
                 });
 
-
                 blsTreeCtrl.template(scope, function (clone) {
                     element.html('').append(clone);
                 });
 
                 scope.$treeTransclude = childTranscludeFn;
             }
-        },
+        }
+    };
+
+    return {
+        restrict: 'E',
+        controller: controller,
+        compile: compile,
         scope: {
             ngModel: '=',
-            onSelect: '&'
+            onSelect: '&',
+            asyncLoad: '&'
         },
-        link: link,
         transclude: true
     };
 
-}]).directive("treeItem", function () {
+}]).directive("treeItem", [ '$q', function ($q) {
     return {
         restrict: 'E',
         require: "^blsTree",
         link: function (scope, element, attrs, blsTreeCtrl) {
             // Rendering template for the current node
-            blsTreeCtrl.template(scope, function (clone) {
-                element.html('').append(clone);
-            });
+
+            if (scope.asyncLoad() && scope.node.children != null && scope.node.children.length == 0) {
+                function async() {
+                    var deferred = $q.defer();
+
+                    deferred.resolve(return scope.asyncLoad()(););
+
+                    return deferred.promise;
+                }
+
+                async().then(function (data) {
+                    scope.node.children = data;
+
+                    blsTreeCtrl.template(scope, function (clone) {
+                        element.html('').append(clone);
+                    });
+                });
+            } else {
+                blsTreeCtrl.template(scope, function (clone) {
+                    element.html('').append(clone);
+                });
+            }
         },
         transclude: true,
         replace: true
     };
-}).directive("treeTransclude", function () {
+}]).directive("treeTransclude", function () {
     return {
         link: function (scope, element, attrs, controller) {
             if (!scope.node.state) {
@@ -94,25 +113,6 @@
                     opened: false
                 };
             }
-            //if (!scope.options.isLeaf(scope.node)) {
-            //    angular.forEach(scope.expandedNodesMap, function (node, id) {
-            //        if (scope.options.equality(node, scope.node)) {
-            //            scope.expandedNodesMap[scope.$id] = scope.node;
-            //            scope.expandedNodesMap[id] = undefined;
-            //        }
-            //    });
-            //}
-            //if (!scope.options.multiSelection && scope.options.equality(scope.node, scope.selectedNode)) {
-            //    scope.selectedNode = scope.node;
-            //} else if (scope.options.multiSelection) {
-            //    var newSelectedNodes = [];
-            //    for (var i = 0; (i < scope.selectedNodes.length) ; i++) {
-            //        if (scope.options.equality(scope.node, scope.selectedNodes[i])) {
-            //            newSelectedNodes.push(scope.node);
-            //        }
-            //    }
-            //    scope.selectedNodes = newSelectedNodes;
-            //}
 
             // create a scope for the transclusion, whos parent is the parent of the tree control
             scope.transcludeScope = scope.parentScopeOfTree.$new();
@@ -124,6 +124,7 @@
             scope.transcludeScope.$last = scope.$last;
             scope.transcludeScope.$odd = scope.$odd;
             scope.transcludeScope.$even = scope.$even;
+
             scope.$on('$destroy', function () {
                 scope.transcludeScope.$destroy();
             });
