@@ -3,7 +3,7 @@
 }
 
 @section scripts{
-<script src="~/Scripts/blsTree/data.js"></script>
+    <script src="~/Scripts/blsTree/data.js"></script>
 }
 
 <div class="container" ng-controller="blsTreeController">
@@ -13,12 +13,11 @@
     </div>
     <div class="row">
         <h3>TreeView</h3>
-        <div class="jstree jstree-1 jstree-default" role="tree" tabindex="0" aria-activedescendant="565" aria-busy="false">
-            <bls-tree 
-                ng-model="data" 
-                display-fn="displayFn"
-                on-select="selectNode"
-                async-load="loadAsync">
+        <div class="tree-view">
+            <bls-tree ng-model="data"
+                      on-select="selectNode"
+                      children-property="['children', 'user']"
+                      async-load="loadAsync">
                 <i class="tree-icon tree-default-icon"></i>
                 <span>{{node.text + " - " + node.description}}</span>
             </bls-tree>

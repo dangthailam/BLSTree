@@ -18,14 +18,21 @@
             node.state.opened = !node.state.opened;
         };
 
-        var template = '<ul>' +
-                '<li ng-repeat="node in node.children" class="tree-node" ng-class="{\'tree-closed\': !node.state.opened, \'tree-open\': node.state.opened, \'tree-last\': $last, \'tree-leaf\': node.children == null}">' +
-                    '<i class="tree-icon tree-ocl" ng-click="toggleChildren(node)"></i>' +
-                    '<span ng-click="selectNode(node)" ng-class="{active: selectedNode === node}" tree-transclude></span>' +
-                    '<tree-item ng-if="node.state.opened"></tree-item>' +
-                '</li>' +
-            '</ul>';
+        var hasChildrenExpr = 'true ';
+        for (var i = 0; i < $scope.childrenProperty.length; i++) {
+            hasChildrenExpr += '&& node.' + $scope.childrenProperty[i] + ' == null';
+        }
 
+        var template = '<ul>';
+
+        for (var i = 0; i < $scope.childrenProperty.length; i++) {
+            template += '<li ng-repeat="node in node.' + $scope.childrenProperty[i] + '" class="tree-node">' +
+                            '<i class="glyphicon" ng-class="{\'glyphicon-expand\': !node.state.opened, \'glyphicon-collapse-down\': node.state.opened, \'no-icon\': ' + hasChildrenExpr + '}" ng-click="toggleChildren(node)"></i>' +
+                            '<span ng-click="selectNode(node)" ng-class="{active: selectedNode === node}" tree-transclude></span>' +
+                            '<bls-tree-item ng-if="node.state.opened"></bls-tree-item>' +
+                        '</li>';
+        }
+        template += '</ul>';
 
         this.template = $compile(template);
     }];
@@ -33,7 +40,7 @@
     var compile = function (element, attrs, childTranscludeFn) {
         return {
             pre: function preLink(scope, element, attributes) {
-                
+
             },
             post: function postLink(scope, element, attributes, blsTreeCtrl) {
                 scope.$watch('ngModel', function (newVal) {
@@ -68,12 +75,13 @@
         scope: {
             ngModel: '=',
             onSelect: '&',
-            asyncLoad: '&'
+            asyncLoad: '&',
+            childrenProperty: '='
         },
         transclude: true
     };
 
-}]).directive("treeItem", function () {
+}]).directive("blsTreeItem", function () {
     return {
         restrict: 'E',
         require: "^blsTree",
