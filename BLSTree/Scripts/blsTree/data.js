@@ -34,6 +34,27 @@
                       text: 'aaa',
                       description: 'qsdqsd  qsdqsd qdqsd qsdqs'
                   }
+                ],
+                user: [
+                    {
+                        id: 111,
+                        text: 'aaa',
+                        description: 'user children',
+                        children: [
+                        {
+                            id: 111,
+                            text: 'aaa',
+                            description: 'qsdqsd  qsdqsd qdqsd qsdqs',
+                            children: []
+                        },
+                        {
+                            id: 111,
+                            text: 'aaa',
+                            description: 'qsdqsd  qsdqsd qdqsd qsdqs',
+                            children: null
+                        }
+                        ]
+                    }
                 ]
             }
           ]
