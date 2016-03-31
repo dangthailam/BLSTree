@@ -7,20 +7,7 @@ ul {
     list-style-type: none;
 }
 
-.tree-view ul li{
-    padding-left: 30px;
-    cursor: pointer;
-}
-
-.tree-view ul li i{
-    width: 14px;
-    height: 14px;
-}
-
-.tree-view ul li i.glyphicon.no-icon:before{
-    content: '';
-}
-/*.tree-node,
+.tree-node,
 .tree-icon {
     background-repeat: no-repeat;
     background-color: transparent;
@@ -34,16 +21,25 @@ ul {
     min-width: 24px;
 }
 
+.tree-node > .tree-node-row{
+    height: 24px;
+    width: 100%;
+}
+
+.tree-node > .tree-node-row > .tree-ocl{
+    float:left;
+}
+
 html > body .tree-node {
     background-position: -292px -4px;
     background-repeat: repeat-y;
 }
 
-.tree-open > .tree-ocl {
+.tree-open .tree-ocl {
     background-position: -132px -4px;
 }
 
-.tree-closed > .tree-ocl {
+.tree-closed .tree-ocl {
     background-position: -100px -4px;
 }
 
@@ -63,7 +59,7 @@ html > body .tree-node {
     background: transparent;
 }
 
-.tree-leaf > .tree-ocl {
+.tree-leaf .tree-ocl {
     background-position: -68px -4px;
 }
 
@@ -75,4 +71,4 @@ html > body .tree-node {
     background-color: transparent;
     background-image: none;
     background-position: 0 0;
-}*/
+}

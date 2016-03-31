@@ -8,19 +8,20 @@
 
 <div class="container" ng-controller="blsTreeController">
     <div class="row">
-        <input type="text" ng-model="searchedText" class="form-control" />
-        <button ng-click="search(searchedText)" class="form-control">Search</button>
-    </div>
-    <div class="row">
         <h3>TreeView</h3>
-        <div class="tree-view">
+        <div>
             <bls-tree ng-model="data"
+                      display-fn="displayFn"
                       on-select="selectNode"
-                      children-property="['children', 'user']"
+                      children-property="children"
                       async-load="loadAsync">
                 <i class="tree-icon tree-default-icon"></i>
                 <span>{{node.text + " - " + node.description}}</span>
             </bls-tree>
+        </div>
+        <div class="row">
+            <input type="text" ng-model="searchedText" class="form-control" />
+            <button ng-click="search(searchedText)" class="form-control">Search</button>
         </div>
     </div>
 </div>

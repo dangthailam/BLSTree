@@ -5,7 +5,7 @@
 
         $scope.selectedNode = null;
 
-        $scope.selectNode = function (node) {
+        $scope.clickOnNode = function (node) {
             $scope.selectedNode = node;
 
             /* Call on select event */
@@ -18,21 +18,19 @@
             node.state.opened = !node.state.opened;
         };
 
-        var hasChildrenExpr = 'true ';
-        for (var i = 0; i < $scope.childrenProperty.length; i++) {
-            hasChildrenExpr += '&& node.' + $scope.childrenProperty[i] + ' == null';
-        }
+        setOpenState($scope.ngModel, $scope.childrenProperty, $scope.openAll);
 
-        var template = '<ul>';
+        var template = '<div class="jstree jstree-1 jstree-default"><ul>';
 
-        for (var i = 0; i < $scope.childrenProperty.length; i++) {
-            template += '<li ng-repeat="node in node.' + $scope.childrenProperty[i] + '" class="tree-node">' +
-                            '<i class="glyphicon" ng-class="{\'glyphicon-expand\': !node.state.opened, \'glyphicon-collapse-down\': node.state.opened, \'no-icon\': ' + hasChildrenExpr + '}" ng-click="toggleChildren(node)"></i>' +
-                            '<span ng-click="selectNode(node)" ng-class="{active: selectedNode === node}" tree-transclude></span>' +
-                            '<bls-tree-item ng-if="node.state.opened"></bls-tree-item>' +
-                        '</li>';
-        }
-        template += '</ul>';
+        template += '<li ng-repeat="node in node.' + $scope.childrenProperty + ' | orderBy: \'' + $scope.orderProperty + '\'" class="tree-node" ng-class="{\'tree-closed\': !node.state.opened, \'tree-open\': node.state.opened, \'tree-last\': $last, \'tree-leaf\': node.' + $scope.childrenProperty + ' == null}">' +
+                        '<div class="tree-node-row">' +
+                            '<i class="tree-icon tree-ocl" ng-click="toggleChildren(node)"></i>' +
+                            '<div class="" ng-click="clickOnNode(node)" ng-right-click="clickOnNode(node)" ng-class="{active: selectedNode === node}" tree-transclude></div>' +
+                        '</div>' +
+                        '<bls-tree-item ng-if="node.state.opened"></bls-tree-item>' +
+                    '</li>';
+
+        template += '</ul></div>';
 
         this.template = $compile(template);
     }];
@@ -45,19 +43,12 @@
             post: function postLink(scope, element, attributes, blsTreeCtrl) {
                 scope.$watch('ngModel', function (newVal) {
                     if (angular.isArray(newVal)) {
-                        for (var i = 0; i < newVal.length; i++) {
-                            newVal[i].state = {
-                                opened: false
-                            };
-                        };
-
-                        scope.node = {
-                            children: newVal
-                        };
+                        scope.node = {};
+                        scope.node[scope.childrenProperty] = newVal;
                     } else {
-                        scope.node = newVal
+                        scope.node = newVal;
                     }
-                });
+                }, true);
 
                 blsTreeCtrl.template(scope, function (clone) {
                     element.html('').append(clone);
@@ -68,6 +59,18 @@
         }
     };
 
+    function setOpenState(nodeArr, childrenProperty, allOpened) {
+        for (var i = 0; i < nodeArr.length; i++) {
+            nodeArr[i].state = {
+                opened: allOpened ? true : false
+            };
+
+            if (nodeArr[i][childrenProperty]) {
+                setOpenState(nodeArr[i][childrenProperty], childrenProperty, allOpened);
+            }
+        };
+    }
+
     return {
         restrict: 'E',
         controller: controller,
@@ -76,7 +79,9 @@
             ngModel: '=',
             onSelect: '&',
             asyncLoad: '&',
-            childrenProperty: '='
+            childrenProperty: '@',
+            openAll: '=',
+            orderProperty: '@'
         },
         transclude: true
     };

@@ -154,4 +154,32 @@
         return deferred.promise;
 
     }
+
+    $scope.hits = 200;
+    $scope.search = function (keyword) {
+        $scope.data.push({
+            id: ++$scope.hits,
+            text: 'push search' + ++$scope.hits,
+            description: 'qsdqsd  qsdqsd qdqsd qsdqs',
+            children: [
+              {
+                  id: ++$scope.hits,
+                  text: 'aaa' + ++$scope.hits,
+                  description: 'qsdqsd  qsdqsd qdqsd qsdqs',
+                  children: [
+                    {
+                        id: ++$scope.hits,
+                        text: 'aaa' + ++$scope.hits,
+                        description: 'qsdqsd  qsdqsd qdqsd qsdqs'
+                    },
+                    {
+                        id: ++$scope.hits,
+                        text: 'aaa' + ++$scope.hits,
+                        description: 'qsdqsd  qsdqsd qdqsd qsdqs'
+                    }
+                  ]
+              }
+            ]
+        })
+    };
 }]);
